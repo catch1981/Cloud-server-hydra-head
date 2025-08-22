@@ -1,18 +1,16 @@
 FROM python:3.11-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
-
+# Set the working directory inside the container
 WORKDIR /app
 
+# Copy requirements.txt into the container
 COPY requirements.txt ./
+
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy the rest of the application
 COPY . .
 
-EXPOSE 8000
-
-HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz').read()" || exit 1
-
-CMD ["uvicorn", "app.main:api", "--host", "0.0.0.0", "--port", "8000"]
+# Start the application (adjust if you have a different entry point)
+CMD ["python", "src/main.py"]
